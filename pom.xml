@@ -5,12 +5,17 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.565.3</version>
+		<version>2.2</version>
 	</parent>
 
 	<artifactId>parameterized-scheduler</artifactId>
 	<version>0.3-SNAPSHOT</version>
 	<packaging>hpi</packaging>
+
+	<properties>
+		<jenkins.version>1.642.3</jenkins.version>
+		<maven-hpi-plugin.disabledTestInjection>true</maven-hpi-plugin.disabledTestInjection>
+	</properties>
 
 	<name>Parameterized Scheduler</name>
 	<description>Lets you define many cron-like format but with additional parameters for each definition</description>
@@ -58,6 +63,12 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins.workflow</groupId>
+			<artifactId>workflow-job</artifactId>
+			<version>2.1</version>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

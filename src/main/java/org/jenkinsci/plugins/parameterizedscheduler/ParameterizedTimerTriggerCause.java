@@ -4,8 +4,6 @@ import hudson.model.Cause;
 
 import java.util.Map;
 
-import org.jenkinsci.plugins.parameterizedscheduler.Messages;
-
 public class ParameterizedTimerTriggerCause extends Cause {
 
 	private final String description;

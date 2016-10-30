@@ -4,11 +4,13 @@ import static hudson.Util.fixNull;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
 
-import org.jenkinsci.plugins.parameterizedscheduler.Messages;
+import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -28,8 +30,15 @@ public class DescriptorImpl extends TriggerDescriptor {
 	@Override
 	public boolean isApplicable(Item item) {
 		boolean result = false;
+
+		Jenkins jenkins = Jenkins.getInstance();
+
 		if (item instanceof AbstractProject) {
 			result = ((AbstractProject) item).isParameterized();
+		} else if (jenkins != null &&
+			       jenkins.getPlugin("workflow-job") != null &&
+			       item instanceof WorkflowJob) {
+			result = ((WorkflowJob) item).isParameterized();
 		}
 		return result;
 	}
@@ -43,7 +52,7 @@ public class DescriptorImpl extends TriggerDescriptor {
 	 * Performs syntax check.
 	 */
 	public FormValidation doCheckParameterizedSpecification(@QueryParameter String value,
-			@AncestorInPath AbstractProject<?, ?> project) {
+			@AncestorInPath Job<?, ?> job) {
 		try {
 
 			String msg = ParameterizedCronTabList.create(fixNull(value)).checkSanity();
@@ -51,7 +60,7 @@ public class DescriptorImpl extends TriggerDescriptor {
 				return FormValidation.warning(msg);
 			}
 
-			ParametersDefinitionProperty paramDefProp = project.getProperty(ParametersDefinitionProperty.class);
+			ParametersDefinitionProperty paramDefProp = job.getProperty(ParametersDefinitionProperty.class);
 			msg = new ParameterParser().checkSanity(value, paramDefProp);
 			if (msg != null) {
 				return FormValidation.warning(msg);

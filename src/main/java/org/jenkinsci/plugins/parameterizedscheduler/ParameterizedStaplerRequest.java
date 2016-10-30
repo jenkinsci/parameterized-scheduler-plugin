@@ -511,4 +511,9 @@ public class ParameterizedStaplerRequest implements StaplerRequest {
 	public BindInterceptor setBindInterceptpr(BindInterceptor bindListener) {
 		return null;
 	}
+
+	@Override
+	public BindInterceptor setBindInterceptor(BindInterceptor bindInterceptor) {
+		return null;
+	}
 }
