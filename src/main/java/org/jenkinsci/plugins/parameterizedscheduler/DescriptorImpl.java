@@ -8,7 +8,7 @@ import hudson.model.Job;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
-
+import org.jenkinsci.Symbol;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.AncestorInPath;
@@ -16,7 +16,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import antlr.ANTLRException;
 
-@Extension
+@Extension @Symbol("cronParams")
 public class DescriptorImpl extends TriggerDescriptor {
 
 	/**
