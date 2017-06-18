@@ -48,7 +48,7 @@ Then you might want a schedule like the following:
 
 ## Declarative Pipeline Configuration Example ##
 
-The parameterized cron trigger can be specified using the key  `cronParams` under the [triggers directive](https://jenkins.io/doc/book/pipeline/syntax/#declarative-directives). The built in `cron` trigger is still available and is independent of `cronParams`.
+The parameterized cron trigger can be specified using the key  `parameterizedCron` under the [triggers directive](https://jenkins.io/doc/book/pipeline/syntax/#declarative-directives). The built in `cron` trigger is still available and is independent of `parameterizedCron`.
 
 Example:
 
@@ -61,7 +61,7 @@ pipeline {
     }
     triggers {
         cron('H 4/* 0 0 1-5')
-        cronParams('''
+        parameterizedCron('''
         # leave spaces where you want them around the parameters. They'll be trimmed.
         # we let the build run with the default name
         5 * * * * %GREETING=Hola;PLANET=Pluto

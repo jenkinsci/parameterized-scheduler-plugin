@@ -16,7 +16,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import antlr.ANTLRException;
 
-@Extension @Symbol("cronParams")
+@Extension @Symbol("parameterizedCron")
 public class DescriptorImpl extends TriggerDescriptor {
 
 	/**
