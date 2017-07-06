@@ -4,6 +4,7 @@ Parameterized Scheduler
 A Jenkins Plugin to support setting parameters in the build schedule. Using multiple cron lines each ending with a % and some name=value pairs you can schedule your parameterized build to run with different parameters at different times. It may turn out that
 [this improvement request JENKINS-16352](https://issues.jenkins-ci.org/browse/JENKINS-16352)
 will be implemented in Jenkins core. Then this plugin will no longer be needed. My first thought is to try it out as a plugin.
+This plugin now supports [declarative Jenkins pipelines](https://jenkins.io/doc/book/pipeline/syntax/#declarative-pipeline). See configuration example below.
 
 ## Installation ##
 Clone or fork to build the .hpi yourself (_mvn package_) or download the .hpi from my release. Then follow the [Jenkins Plugin installation instructions](https://wiki.jenkins-ci.org/display/JENKINS/Plugins#Plugins-Howtoinstallplugins)
@@ -43,4 +44,36 @@ Then you might want a schedule like the following:
   5 * * * *%furniture=chair;color=black
   # now, let's override that default name and use Mr. Rubble.
   10 * * * * % furniture=desk; color=yellow; name=barney
+```
+
+## Declarative Pipeline Configuration Example ##
+
+The parameterized cron trigger can be specified using the key  `parameterizedCron` under the [triggers directive](https://jenkins.io/doc/book/pipeline/syntax/#declarative-directives). The built in `cron` trigger is still available and is independent of `parameterizedCron`.
+
+Example:
+
+```
+pipeline {
+    agent any
+    options {
+      string(name: 'PLANET', defaultValue: 'Earth', description: 'Which planet are we on?')
+      string(name: 'GREETING', defaultValue: 'Hello', description: 'How shall we greet?')
+    }
+    triggers {
+        cron('H 4/* 0 0 1-5')
+        parameterizedCron('''
+        # leave spaces where you want them around the parameters. They'll be trimmed.
+        # we let the build run with the default name
+        5 * * * * %GREETING=Hola;PLANET=Pluto
+        10 * * * * %PLANET=Mars
+        ''')
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo "${GREETING} ${PLANET}"
+            }
+        }
+    }
+}
 ```
