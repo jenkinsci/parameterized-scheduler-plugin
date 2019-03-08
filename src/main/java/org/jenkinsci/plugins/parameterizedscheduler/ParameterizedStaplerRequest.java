@@ -215,6 +215,9 @@ public class ParameterizedStaplerRequest implements StaplerRequest {
 
 	@Override
 	public String[] getParameterValues(String name) {
+		if (value != null) {
+			return value.split(",")
+		}
 		return new String[] { value };
 	}
 
