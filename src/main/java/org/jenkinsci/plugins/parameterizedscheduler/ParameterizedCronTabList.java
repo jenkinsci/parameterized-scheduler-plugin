@@ -2,17 +2,16 @@ package org.jenkinsci.plugins.parameterizedscheduler;
 
 import hudson.scheduler.CronTabList;
 import hudson.scheduler.Hash;
-import hudson.scheduler.Messages;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import antlr.ANTLRException;
 
 /**
  * mostly a copy of {@link CronTabList}
- * 
+ *
  * @author jameswilson
  *
  */
@@ -45,12 +44,10 @@ public class ParameterizedCronTabList {
 		return new ParameterizedCronTabList(result);
 	}
 
-	public ParameterizedCronTab check(Calendar calendar) {
-		for (ParameterizedCronTab tab : cronTabs) {
-			if (tab.check(calendar))
-				return tab;
-		}
-		return null;
+	public List<ParameterizedCronTab> check(Calendar calendar) {
+		return cronTabs.stream()
+				.filter(tab -> tab.check(calendar))
+				.collect(Collectors.toList());
 	}
 
 	public String checkSanity() {

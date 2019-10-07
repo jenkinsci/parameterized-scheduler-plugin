@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import hudson.triggers.TriggerDescriptor;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -20,7 +19,7 @@ import antlr.ANTLRException;
 
 /**
  * {@link Trigger} that runs a job periodically with support for parameters.
- * 
+ *
  * @author jameswilson
  *
  */
@@ -43,7 +42,7 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 
 	/**
 	 * this method started out as hudson.model.AbstractProject.getDefaultParametersValues()
-	 * @param parameterValues 
+	 * @param parameterValues
 	 * @return the ParameterValues as set from the crontab row or their defaults
 	 */
 	@SuppressWarnings("unchecked")
@@ -70,10 +69,10 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 
 	public void checkCronTabsAndRun(Calendar calendar) {
 		LOGGER.fine("checking and maybe running at " + calendar);
-		ParameterizedCronTab cronTab = cronTabList.check(calendar);
+		List<ParameterizedCronTab> checkedCronTabList = cronTabList.check(calendar);
 		Jenkins jenkins = Jenkins.getInstance();
 
-		if (cronTab != null) {
+		checkedCronTabList.forEach(cronTab -> {
 			Map<String, String> parameterValues = cronTab.getParameterValues();
 			ParametersAction parametersAction = new ParametersAction(configurePropertyValues(parameterValues));
 			assert job != null : "job must not be null, if this was 'started'";
@@ -82,7 +81,7 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 			} else if (jenkins != null && jenkins.getPlugin("workflow-job") != null && job instanceof WorkflowJob) {
 				((WorkflowJob) job).scheduleBuild2(0, causeAction(parameterValues), parametersAction);
 			}
-		}
+		});
 	}
 
 	private CauseAction causeAction(Map<String, String> parameterValues) {
@@ -104,7 +103,7 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 
 	/**
 	 * for the config.jelly to populate
-	 * 
+	 *
 	 * @return the raw specification
 	 */
 	public String getParameterizedSpecification() {

@@ -6,11 +6,12 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.jenkinsci.plugins.parameterizedscheduler.ParameterizedCronTab;
-import org.jenkinsci.plugins.parameterizedscheduler.ParameterizedCronTabList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,14 +29,20 @@ public class ParameterizedCronTabListTest {
 
 	@Test
 	public void create() throws Exception {
-		ParameterizedCronTabList testObject = ParameterizedCronTabList.create("* * * * *%foo=bar");
+		ParameterizedCronTabList testObject = ParameterizedCronTabList.create("* * * * *%foo=bar\n */1 * * * *%bar=foo");
 		assertTrue(testObject.checkSanity(), testObject.checkSanity().startsWith("Do you really mean \"every minute\""));
-		ParameterizedCronTab actualCronTab = testObject.check(new GregorianCalendar());
-		assertTrue(actualCronTab != null);
+		List<ParameterizedCronTab> actualCronTabList = testObject.check(new GregorianCalendar());
+		assertTrue(actualCronTabList.size() == 2);
 
 		Map<String, String> expected = Maps.newHashMap();
 		expected.put("foo", "bar");
-		assertEquals(expected, actualCronTab.getParameterValues());
+		expected.put("bar", "foo");
+
+		Map<String, String> actual = actualCronTabList.stream()
+				.flatMap(tab -> tab.getParameterValues().entrySet().stream())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+		assertEquals(expected, actual);
 	}
 
 	@Test
@@ -44,22 +51,20 @@ public class ParameterizedCronTabListTest {
 				mockParameterizedCronTabToo));
 		GregorianCalendar testCalendar = new GregorianCalendar();
 
-		assertNull(testObject.check(testCalendar));
+		assertTrue(testObject.check(testCalendar).isEmpty());
 
 		Mockito.verify(mockParameterizedCronTab).check(testCalendar);
 		Mockito.verify(mockParameterizedCronTabToo).check(testCalendar);
 	}
 
 	@Test
-	public void check_Delegates_ReturnsSame_EarlyExit() {
+	public void check_Delegates_ReturnsSame_WithoutEarlyExit() {
 		ParameterizedCronTabList testObject = new ParameterizedCronTabList(Arrays.asList(mockParameterizedCronTab,
 				mockParameterizedCronTabToo));
 		GregorianCalendar testCalendar = new GregorianCalendar();
 
 		Mockito.when(mockParameterizedCronTab.check(testCalendar)).thenReturn(true);
-		assertSame(mockParameterizedCronTab, testObject.check(testCalendar));
-
-		Mockito.verifyZeroInteractions(mockParameterizedCronTabToo);
+		assertEquals(Collections.singletonList(mockParameterizedCronTab), testObject.check(testCalendar));
 	}
 
 	@Test
@@ -69,8 +74,7 @@ public class ParameterizedCronTabListTest {
 		GregorianCalendar testCalendar = new GregorianCalendar();
 
 		Mockito.when(mockParameterizedCronTabToo.check(testCalendar)).thenReturn(true);
-		assertSame(mockParameterizedCronTabToo, testObject.check(testCalendar));
-
+		assertEquals(Collections.singletonList(mockParameterizedCronTabToo), testObject.check(testCalendar));
 	}
 
 	@Test
