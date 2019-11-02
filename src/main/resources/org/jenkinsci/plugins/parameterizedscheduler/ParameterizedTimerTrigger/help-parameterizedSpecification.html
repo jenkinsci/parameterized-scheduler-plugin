@@ -29,5 +29,8 @@
 H/15 * * * * %name=value
 # every ten minutes in the first half of every hour (three times, perhaps at :04, :14, :24)
 H(0-29)/10 * * * * % name=value; othername=othervalue
+# with timezone
+TZ=Australia/Sydney
+H/15 * * * * %name=value
 </pre>
 </div>
