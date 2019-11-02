@@ -39,7 +39,7 @@ public class ParameterizedCronTabList {
 				if(lineNumber == 1 && line.startsWith("TZ=")) {
 					timezone = CronTabList.getValidTimezone(line.replace("TZ=", ""));
 					if (timezone == null) {
-						throw new ANTLRException("Invalid or unsupported timezone '" + timezone + "'");
+						throw new ANTLRException("Invalid or unsupported timezone '" + line + "'");
 					}
 				} else {
 					try {
