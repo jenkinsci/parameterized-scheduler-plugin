@@ -148,4 +148,14 @@ public class ParameterParserTest {
 		testObject.checkSanity("* * * * *%name=value;name2=", mockParametersDefinitionProperty);
 	}
 
+	@Test
+	public void test_paramValue_with_percent() {
+		ParameterParser testObject = new ParameterParser();
+
+		HashMap<String, String> expected = new HashMap<String, String>();
+		expected.put("name", "value");
+		expected.put("percent", "10%");
+		assertEquals(expected, testObject.parse("name=value;percent=10%"));
+	}
+
 }
