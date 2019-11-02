@@ -107,4 +107,16 @@ public class ParameterizedCronTabListTest {
 
 	}
 
+	@Test
+	public void create_with_timezone() throws Exception {
+		ParameterizedCronTabList testObject = ParameterizedCronTabList.create("TZ=Australia/Sydney \n * * * * *%foo=bar");
+		assertTrue(testObject.checkSanity(), testObject.checkSanity().startsWith("Do you really mean \"every minute\""));
+		ParameterizedCronTab actualCronTab = testObject.check(new GregorianCalendar());
+		assertTrue(actualCronTab != null);
+
+		Map<String, String> expected = Maps.newHashMap();
+		expected.put("foo", "bar");
+		assertEquals(expected, actualCronTab.getParameterValues());
+	}
+
 }
