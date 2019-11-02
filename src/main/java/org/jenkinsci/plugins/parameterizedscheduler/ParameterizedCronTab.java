@@ -35,9 +35,9 @@ public class ParameterizedCronTab {
 	 *      Used to spread out token like "@daily". Null to preserve the legacy behaviour
 	 *      of not spreading it out at all.
 	 */
-	public static ParameterizedCronTab create(String line, int lineNumber, Hash hash) throws ANTLRException {
+	public static ParameterizedCronTab create(String line, int lineNumber, Hash hash, String timezone) throws ANTLRException {
 		String[] lineParts = line.split("%");
-		CronTab cronTab = new CronTab(lineParts[0].trim(), lineNumber, hash);
+		CronTab cronTab = new CronTab(lineParts[0].trim(), lineNumber, hash, timezone);
 		Map<String, String> parameters = Maps.newHashMap();
 		if (lineParts.length == 2) {
 			parameters = new ParameterParser().parse(lineParts[1]);

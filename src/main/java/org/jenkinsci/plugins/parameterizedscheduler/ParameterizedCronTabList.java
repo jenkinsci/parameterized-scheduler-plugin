@@ -31,15 +31,23 @@ public class ParameterizedCronTabList {
 	public static ParameterizedCronTabList create(String cronTabSpecification, Hash hash) throws ANTLRException {
 		List<ParameterizedCronTab> result = new ArrayList<ParameterizedCronTab>();
 		int lineNumber = 0;
+		String timezone = null;
 		for (String line : cronTabSpecification.split("\\r?\\n")) {
-			lineNumber++;
 			line = line.trim();
-			if (line.length() == 0 || line.startsWith("#"))
-				continue; // ignorable line
-			try {
-				result.add(ParameterizedCronTab.create(line, lineNumber, hash));
-			} catch (ANTLRException e) {
-				throw new ANTLRException(String.format("Invalid input: \"%s\": %s", line, e.toString()), e);
+			if(line.length() > 0 && !line.startsWith("#")) {
+				lineNumber++;
+				if(lineNumber == 1 && line.startsWith("TZ=")) {
+					timezone = CronTabList.getValidTimezone(line.replace("TZ=", ""));
+					if (timezone == null) {
+						throw new ANTLRException("Invalid or unsupported timezone '" + timezone + "'");
+					}
+				} else {
+					try {
+						result.add(ParameterizedCronTab.create(line, lineNumber, hash, timezone));
+					} catch (ANTLRException e) {
+						throw new ANTLRException(String.format("Invalid input: \"%s\": %s", line, e.toString()), e);
+					}
+				}
 			}
 		}
 		return new ParameterizedCronTabList(result);
