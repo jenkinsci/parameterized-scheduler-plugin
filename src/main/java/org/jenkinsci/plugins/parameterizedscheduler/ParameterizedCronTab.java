@@ -36,13 +36,19 @@ public class ParameterizedCronTab {
 	 *      of not spreading it out at all.
 	 */
 	public static ParameterizedCronTab create(String line, int lineNumber, Hash hash, String timezone) throws ANTLRException {
-		String[] lineParts = line.split("%");
-		CronTab cronTab = new CronTab(lineParts[0].trim(), lineNumber, hash, timezone);
 		Map<String, String> parameters = Maps.newHashMap();
-		if (lineParts.length == 2) {
-			parameters = new ParameterParser().parse(lineParts[1]);
+		int firstPercentIdx = line.indexOf("%");
+		if(firstPercentIdx != -1) {
+			String cronLinePart = line.substring(0, firstPercentIdx).trim();
+			String paramsLinePart = line.substring(firstPercentIdx + 1).trim();
+			CronTab cronTab = new CronTab(cronLinePart, lineNumber, hash, timezone);
+			parameters = new ParameterParser().parse(paramsLinePart);
+			return new ParameterizedCronTab(cronTab, parameters);
+		} else {
+			CronTab cronTab = new CronTab(line, lineNumber, hash, timezone);
+			return new ParameterizedCronTab(cronTab, parameters);
 		}
-		return new ParameterizedCronTab(cronTab, parameters);
+
 	}
 
 	public Map<String, String> getParameterValues() {
