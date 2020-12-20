@@ -86,7 +86,7 @@ Example Output in Jenkins
 ![Example Output in Jenkins](https://raw.githubusercontent.com/jenkinsci/parameterized-scheduler-plugin/master/site/images/scheduledBuilds.PNG)
 
 
-## Pipeline as code example
+## Scripted Pipeline Example
 
 ```
 properties(
