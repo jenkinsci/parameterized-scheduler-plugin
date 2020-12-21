@@ -9,7 +9,6 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.Symbol;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -31,13 +30,9 @@ public class DescriptorImpl extends TriggerDescriptor {
 	public boolean isApplicable(Item item) {
 		boolean result = false;
 
-		Jenkins jenkins = Jenkins.getInstance();
-
 		if (item instanceof AbstractProject) {
 			result = ((AbstractProject) item).isParameterized();
-		} else if (jenkins != null &&
-			       jenkins.getPlugin("workflow-job") != null &&
-			       item instanceof WorkflowJob) {
+		} else if (item instanceof WorkflowJob) {
 			result = ((WorkflowJob) item).isParameterized();
 		}
 		return result;

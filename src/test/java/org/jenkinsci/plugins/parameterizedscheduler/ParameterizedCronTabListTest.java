@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.parameterizedscheduler;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -9,8 +10,6 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
-import org.jenkinsci.plugins.parameterizedscheduler.ParameterizedCronTab;
-import org.jenkinsci.plugins.parameterizedscheduler.ParameterizedCronTabList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,7 +30,7 @@ public class ParameterizedCronTabListTest {
 		ParameterizedCronTabList testObject = ParameterizedCronTabList.create("* * * * *%foo=bar");
 		assertTrue(testObject.checkSanity(), testObject.checkSanity().startsWith("Do you really mean \"every minute\""));
 		ParameterizedCronTab actualCronTab = testObject.check(new GregorianCalendar());
-		assertTrue(actualCronTab != null);
+		assertNotNull(actualCronTab);
 
 		Map<String, String> expected = Maps.newHashMap();
 		expected.put("foo", "bar");

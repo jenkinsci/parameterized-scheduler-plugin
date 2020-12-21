@@ -2,9 +2,8 @@ package org.jenkinsci.plugins.parameterizedscheduler;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import antlr.ANTLRException;
 import hudson.scheduler.CronTab;
@@ -38,7 +37,7 @@ public class ParameterizedCronTab {
 	public static ParameterizedCronTab create(String line, int lineNumber, Hash hash) throws ANTLRException {
 		String[] lineParts = line.split("%");
 		CronTab cronTab = new CronTab(lineParts[0].trim(), lineNumber, hash);
-		Map<String, String> parameters = Maps.newHashMap();
+		Map<String, String> parameters = new HashMap<>();
 		if (lineParts.length == 2) {
 			parameters = new ParameterParser().parse(lineParts[1]);
 		}

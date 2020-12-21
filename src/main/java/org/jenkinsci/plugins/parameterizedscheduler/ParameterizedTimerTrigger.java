@@ -1,6 +1,13 @@
 package org.jenkinsci.plugins.parameterizedscheduler;
 
-import hudson.model.*;
+import hudson.model.AbstractProject;
+import hudson.model.Cause;
+import hudson.model.CauseAction;
+import hudson.model.Job;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
+import hudson.model.ParametersDefinitionProperty;
 import hudson.scheduler.Hash;
 import hudson.triggers.Trigger;
 
@@ -11,8 +18,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import hudson.triggers.TriggerDescriptor;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -46,12 +51,11 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 	 * @param parameterValues 
 	 * @return the ParameterValues as set from the crontab row or their defaults
 	 */
-	@SuppressWarnings("unchecked")
 	private List<ParameterValue> configurePropertyValues(Map<String, String> parameterValues) {
 		assert job != null : "job must not be null if this was 'started'";
 		ParametersDefinitionProperty paramDefProp = (ParametersDefinitionProperty) job
 				.getProperty(ParametersDefinitionProperty.class);
-		ArrayList<ParameterValue> defValues = new ArrayList<ParameterValue>();
+		List<ParameterValue> defValues = new ArrayList<>();
 
 		/* Scan for all parameter with an associated default values */
 		for (ParameterDefinition paramDefinition : paramDefProp.getParameterDefinitions()) {
@@ -71,7 +75,6 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 	public void checkCronTabsAndRun(Calendar calendar) {
 		LOGGER.fine("checking and maybe running at " + calendar);
 		ParameterizedCronTab cronTab = cronTabList.check(calendar);
-		Jenkins jenkins = Jenkins.getInstance();
 
 		if (cronTab != null) {
 			Map<String, String> parameterValues = cronTab.getParameterValues();
@@ -79,7 +82,7 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 			assert job != null : "job must not be null, if this was 'started'";
 			if (job instanceof AbstractProject) {
 				((AbstractProject) job).scheduleBuild2(0, (Cause)null, causeAction(parameterValues), parametersAction);
-			} else if (jenkins != null && jenkins.getPlugin("workflow-job") != null && job instanceof WorkflowJob) {
+			} else if (job instanceof WorkflowJob) {
 				((WorkflowJob) job).scheduleBuild2(0, causeAction(parameterValues), parametersAction);
 			}
 		}

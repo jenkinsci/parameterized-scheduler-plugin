@@ -86,7 +86,7 @@ Example Output in Jenkins
 ## Scripted Pipeline Example
 
 ```
-properties(
+properties([
   parameters([
     string(name: 'PLANET', defaultValue: 'Earth', description: 'Which planet are we on?'),
     string(name: 'GREETING', defaultValue: 'Hello', description: 'How shall we greet?')
@@ -95,5 +95,5 @@ properties(
     parameterizedCron('*/2 * * * * %GREETING=Hola;PLANET=Pluto'),
     parameterizedCron('*/3 * * * * %PLANET=Mars')
   ])
-)
+])
 ```
