@@ -92,8 +92,10 @@ properties([
     string(name: 'GREETING', defaultValue: 'Hello', description: 'How shall we greet?')
   ]),
   pipelineTriggers([
-    parameterizedCron('*/2 * * * * %GREETING=Hola;PLANET=Pluto'),
-    parameterizedCron('*/3 * * * * %PLANET=Mars')
+    parameterizedCron('''
+        */2 * * * * %GREETING=Hola;PLANET=Pluto
+        */3 * * * * %PLANET=Mars
+    ''')
   ])
 ])
 ```
