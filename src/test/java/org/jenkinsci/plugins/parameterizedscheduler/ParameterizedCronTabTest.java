@@ -49,20 +49,15 @@ public class ParameterizedCronTabTest {
 		Map<String, String> parameters = Maps.newHashMap();
 		parameters.put("one", "onevalue");
 		parameters.put("two", "10%");
-		CronTab testCronTab = new CronTab("* * * * *");
-		ParameterizedCronTab testObject = new ParameterizedCronTab(testCronTab, parameters);
 
 		ParameterizedCronTab parameterizedCronTab = ParameterizedCronTab.create(line, 1, Hash.from(line), null);
 		assertEquals(parameters, parameterizedCronTab.getParameterValues());
-
 	}
 
 	@Test
 	public void with_no_params_separator() throws Exception {
 		String line = "* * * * *";
 		Map<String, String> parameters = Maps.newHashMap();
-		CronTab testCronTab = new CronTab("* * * * *");
-		ParameterizedCronTab testObject = new ParameterizedCronTab(testCronTab, parameters);
 		ParameterizedCronTab parameterizedCronTab = ParameterizedCronTab.create(line, 1, Hash.from(line), null);
 		assertEquals(parameters, parameterizedCronTab.getParameterValues());
 	}

@@ -37,14 +37,15 @@ public class ParameterizedSchedulerTest {
         FreeStyleProject p = r.createFreeStyleProject();
         p.addProperty(new ParametersDefinitionProperty(new StringParameterDefinition("foo", "lol")));
         assertThat(p.getLastCompletedBuild(), is(nullValue()));
-        Trigger<Job> t = new ParameterizedTimerTrigger("* * * * *%foo=bar");
+        Trigger<Job> t = new ParameterizedTimerTrigger("* * * * *%foo=bar\n*/1 * * * *%foo=boo");
         t.start(p, true);
         p.addTrigger(t);
         new Cron().doRun();
         assertThat(p.isInQueue(), is(true));
         r.waitUntilNoActivity();
         assertThat(p.getLastCompletedBuild(), is(notNullValue()));
-        assertThat((String) p.getLastCompletedBuild().getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(1).getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(2).getAction(ParametersAction.class).getParameter("foo").getValue(), is("boo"));
     }
 
     @Test
@@ -53,13 +54,14 @@ public class ParameterizedSchedulerTest {
         p.setDefinition(new CpsFlowDefinition("", true));
         WorkflowRun wfr = p.scheduleBuild2(0).get();
         p.addProperty(new ParametersDefinitionProperty(new StringParameterDefinition("foo", "lol")));
-        Trigger<Job> t = new ParameterizedTimerTrigger("* * * * *%foo=bar");
+        Trigger<Job> t = new ParameterizedTimerTrigger("* * * * *%foo=bar\n*/1 * * * *%foo=boo");
         t.start(p, true);
         p.addTrigger(t);
         new Cron().doRun();
         r.waitUntilNoActivity();
         assertThat(p.getLastCompletedBuild(), is(not(wfr)));
-        assertThat((String) p.getLastCompletedBuild().getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(2).getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(3).getAction(ParametersAction.class).getParameter("foo").getValue(), is("boo"));
     }
 
     @Test
@@ -70,14 +72,15 @@ public class ParameterizedSchedulerTest {
                 "    string(name: 'foo', defaultValue: 'lol')\n" +
                 "  ]),\n" +
                 "  pipelineTriggers([\n" +
-                "    parameterizedCron('* * * * *%foo=bar')\n" +
+                "    parameterizedCron('* * * * *%foo=bar\\n*/1 * * * *%foo=boo')\n" +
                 "  ])\n" +
                 "])", true));
         WorkflowRun wfr = r.buildAndAssertSuccess(p);
         new Cron().doRun();
         r.waitUntilNoActivity();
         assertThat(p.getLastCompletedBuild(), is(not(wfr)));
-        assertThat((String) p.getLastCompletedBuild().getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(2).getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(3).getAction(ParametersAction.class).getParameter("foo").getValue(), is("boo"));
     }
 
     @Test
@@ -89,7 +92,7 @@ public class ParameterizedSchedulerTest {
                 "      string(name: 'foo', defaultValue: 'lol')\n" +
                 "    }\n" +
                 "    triggers {\n" +
-                "        parameterizedCron('* * * * *%foo=bar')\n" +
+                "        parameterizedCron('* * * * *%foo=bar\\n*/1 * * * *%foo=boo')\n" +
                 "    }\n" +
                 "    stages {\n" +
                 "        stage('Test') {\n" +
@@ -103,7 +106,8 @@ public class ParameterizedSchedulerTest {
         new Cron().doRun();
         r.waitUntilNoActivity();
         assertThat(p.getLastCompletedBuild(), is(not(wfr)));
-        assertThat((String) p.getLastCompletedBuild().getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(2).getAction(ParametersAction.class).getParameter("foo").getValue(), is("bar"));
+        assertThat((String) p.getBuildByNumber(3).getAction(ParametersAction.class).getParameter("foo").getValue(), is("boo"));
     }
 
     @Test

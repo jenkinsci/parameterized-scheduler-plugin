@@ -78,9 +78,9 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 
 	public void checkCronTabsAndRun(Calendar calendar) {
 		LOGGER.fine("checking and maybe running at " + calendar);
-		ParameterizedCronTab cronTab = cronTabList.check(calendar);
+		List<ParameterizedCronTab> cronTabs = cronTabList.check(calendar);
 
-		if (cronTab != null) {
+		cronTabs.forEach(cronTab -> {
 			Map<String, String> parameterValues = cronTab.getParameterValues();
 			ParametersAction parametersAction = new ParametersAction(configurePropertyValues(parameterValues));
 			assert job != null : "job must not be null, if this was 'started'";
@@ -89,7 +89,7 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 			} else if (job instanceof WorkflowJob) {
 				((WorkflowJob) job).scheduleBuild2(0, causeAction(parameterValues), parametersAction);
 			}
-		}
+		});
 	}
 
 	private CauseAction causeAction(Map<String, String> parameterValues) {
