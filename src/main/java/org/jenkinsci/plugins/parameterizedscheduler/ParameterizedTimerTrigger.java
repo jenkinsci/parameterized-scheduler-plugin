@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.json.JSONObject;
+
 /**
  * {@link Trigger} that runs a job periodically with support for parameters.
  * 
@@ -62,7 +64,15 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 			if (parameterValues.containsKey(paramDefinition.getName())) {
 				ParameterizedStaplerRequest request = new ParameterizedStaplerRequest(
 						parameterValues.get(paramDefinition.getName()));
-				ParameterValue value = paramDefinition.createValue(request);
+				ParameterValue value;
+				if (paramDefinition.getClass().getName().equals("com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition") &&
+						paramDefinition.getType().equals("PT_JSON")) {
+					JSONObject jO = new JSONObject();
+					jO.put("value", parameterValues.get(paramDefinition.getName()));
+					value = paramDefinition.createValue(request, jO);
+				} else {
+					value = paramDefinition.createValue(request);
+				}
 				if (value!= null) {
 					defValues.add(value);
 				} else {
