@@ -38,6 +38,10 @@ public class ParameterizedTimerTrigger extends Trigger<Job> {
 		this.cronTabList = ParameterizedCronTabList.create(parameterizedSpecification);
 	}
 
+	public ParameterizedCronTabList getCronTabList() {
+		return cronTabList;
+	}
+
 	@Override
 	public void run() {
 		LOGGER.fine("tried to run from base Trigger, nothing will happen");

@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.parameterizedscheduler;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.scheduler.CronTabList;
 import hudson.scheduler.Hash;
 
@@ -62,5 +63,64 @@ public class ParameterizedCronTabList {
 				return s;
 		}
 		return null;
+	}
+
+	public @CheckForNull Calendar previous() {
+		Calendar nearest = null;
+		for (ParameterizedCronTab tab : cronTabs) {
+			Calendar next = tab.next();
+			if (next == null || next.before(nearest)) {
+				nearest = next;
+			}
+		}
+		return nearest;
+	}
+
+	public @CheckForNull Calendar next() {
+		Calendar nearest = null;
+		for (ParameterizedCronTab tab : cronTabs) {
+			Calendar previous = tab.previous();
+			if (nearest == null || nearest.after(previous)) {
+				nearest = previous;
+			}
+		}
+		return nearest;
+	}
+
+	public @CheckForNull ParameterizedCronTab nextParameterizedCronTab() {
+		Calendar nearest = null;
+		ParameterizedCronTab next = null;
+		for (ParameterizedCronTab tab : cronTabs) {
+			Calendar previous = tab.previous();
+			if (nearest == null || nearest.after(previous)) {
+				nearest = previous;
+				next = tab;
+			}
+		}
+		return next;
+	}
+
+	@CheckForNull
+	public Calendar ceil(long timestamp) {
+		Calendar ceil = null;
+		for (ParameterizedCronTab wrapper: cronTabs) {
+			Calendar scheduled = wrapper.ceil(timestamp);
+			if (ceil == null || (scheduled != null && ceil.after(scheduled))) {
+				ceil = scheduled;
+			}
+		}
+		return ceil;
+	}
+
+	@CheckForNull
+	public Calendar floor(long timestamp) {
+		Calendar floor = null;
+		for (ParameterizedCronTab wrapper: cronTabs) {
+			Calendar scheduled = wrapper.floor(timestamp);
+			if (floor == null || (scheduled != null && floor.before(scheduled))) {
+				floor = scheduled;
+			}
+		}
+		return floor;
 	}
 }

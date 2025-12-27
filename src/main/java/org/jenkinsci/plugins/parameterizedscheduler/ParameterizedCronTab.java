@@ -8,6 +8,7 @@ import java.util.Map;
 import hudson.scheduler.CronTab;
 import hudson.scheduler.CronTabList;
 import hudson.scheduler.Hash;
+import org.kohsuke.accmod.restrictions.suppressions.SuppressRestrictedWarnings;
 
 /**
  * this is a copy of {@link CronTab} with added parameters map support
@@ -18,6 +19,7 @@ public class ParameterizedCronTab {
 
 	private final Map<String, String> parameterValues;
 	private final CronTabList cronTabList;
+	private final CronTab cronTab;
 
 	/**
 	 * @param cronTab the crontab to use as a template
@@ -26,6 +28,7 @@ public class ParameterizedCronTab {
 	public ParameterizedCronTab(CronTab cronTab, Map<String, String> parameters) {
 		cronTabList = new CronTabList(Collections.singleton(cronTab));
 		parameterValues = parameters;
+		this.cronTab = cronTab;
 	}
 
 	/**
@@ -59,5 +62,23 @@ public class ParameterizedCronTab {
 
 	public String checkSanity() {
 		return cronTabList.checkSanity();
+	}
+
+	@SuppressRestrictedWarnings(CronTabList.class)
+	public Calendar previous() {
+		return cronTabList.previous();
+	}
+
+	@SuppressRestrictedWarnings(CronTabList.class)
+	public Calendar next() {
+		return cronTabList.next();
+	}
+
+	public Calendar ceil(long timeInMillis) {
+		return cronTab.ceil(timeInMillis);
+	}
+
+	public Calendar floor(long timeInMillis) {
+		return cronTab.floor(timeInMillis);
 	}
 }
