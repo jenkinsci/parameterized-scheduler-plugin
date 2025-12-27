@@ -6,6 +6,7 @@ import hudson.scheduler.Hash;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,10 @@ public class ParameterizedCronTabList {
 
 	public ParameterizedCronTabList(List<ParameterizedCronTab> cronTabs) {
 		this.cronTabs = cronTabs;
+	}
+
+	public List<ParameterizedCronTab> getCronTabs() {
+		return Collections.unmodifiableList(cronTabs);
 	}
 
 	public static ParameterizedCronTabList create(String cronTabSpecification) {

@@ -31,6 +31,10 @@ public class ParameterizedCronTab {
 		this.cronTab = cronTab;
 	}
 
+	public CronTab getCronTab() {
+		return cronTab;
+	}
+	
 	/**
 	 * @param hash
 	 *      Used to spread out token like "@daily". Null to preserve the legacy behaviour
