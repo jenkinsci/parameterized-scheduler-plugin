@@ -1,6 +1,6 @@
 # Parameterized Scheduler
 
-[![Jenkins](https://ci.jenkins.io/job/Plugins/job/parameterized-scheduler-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/parameterized-scheduler-plugin/job/master/)
+[![Jenkins](https://ci.jenkins.io/buildStatus/icon?job=Plugins%2Fparameterized-scheduler-plugin%2Fmaster)](https://ci.jenkins.io/job/Plugins/job/parameterized-scheduler-plugin/job/master/)
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/parameterized-scheduler.svg)](https://plugins.jenkins.io/parameterized-scheduler)
 [![GitHub release](https://img.shields.io/github/release/jenkinsci/parameterized-scheduler-plugin.svg?label=changelog)](https://github.com/jenkinsci/parameterized-scheduler-plugin/releases/latest)
 
